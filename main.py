@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
     dst = Path("./shots")  # Directory to store resulting png in.
     dst.mkdir(exist_ok=True)
-    url = "https://www.google.com/maps/@50.9503538,4.7123571,734m/data=!3m1!1e3!5m1!1e1"
+    url = "https://www.google.com/maps/@50.9503538,4.7123571,734m/data=!5m1!1e1"
     with sync_playwright() as p:
         browser_type = p.chromium
         browser = browser_type.launch()
