@@ -3,7 +3,7 @@
 import logging
 import logging.handlers
 import os
-import time
+from datetime import datetime, timezone
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
@@ -37,7 +37,8 @@ if __name__ == "__main__":
             except Exception as e:
                 logging.debug(f"Clicked {i}th element: {str(e)}")
         page.wait_for_load_state("networkidle")
-        timestr = time.strftime("%Y%m%d-%H%M%S")
+        now_utc = datetime.now(timezone.utc)
+        timestr = now_utc.strftime("%Y%m%d-%H%M%S")
         shot_file = dst / f"rotselaar_{timestr}.png"
         page.screenshot(path=shot_file.as_posix())
         logger.info(f"Took shot {shot_file.as_posix()} on {timestr}.")
