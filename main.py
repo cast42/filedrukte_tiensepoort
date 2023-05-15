@@ -30,7 +30,7 @@ if __name__ == "__main__":
         browser = browser_type.launch()
         page = browser.new_page()
         page.goto(url)
-        page.get_by_label("Alles accepteren").all()[0].click()
+        page.get_by_label("Accept all").all()[0].click()
         page.wait_for_load_state("networkidle")
         timestr = time.strftime("%Y%m%d-%H%M%S")
         shot_file = dst / f"rotselaar_{timestr}.png"
