@@ -30,7 +30,11 @@ if __name__ == "__main__":
         browser = browser_type.launch()
         page = browser.new_page()
         page.goto(url)
-        page.get_by_label("Accept all").all()[0].click()
+        for i, el in enumerate(page.get_by_label("Accept all").all()):
+            try:
+                el.click()
+            except Exception as e:
+                logging.debug(f"Clicked {i}th element: {str(e)}")
         page.wait_for_load_state("networkidle")
         timestr = time.strftime("%Y%m%d-%H%M%S")
         shot_file = dst / f"rotselaar_{timestr}.png"
