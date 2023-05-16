@@ -32,7 +32,14 @@ if __name__ == "__main__":
         context = browser.new_context()
         page = context.new_page()
         page.goto(consent_url)
-        page.get_by_role("button", name="Accept all").click()
+        # page.get_by_role("button", name="Accept all").click()
+
+        for i, el in enumerate(page.get_by_label("Accept all").all()):
+            try:
+                el.click()
+            except Exception as e:
+                logging.debug(f"Clicked {i}th element: {str(e)}")
+        page.wait_for_load_state("networkidle")
 
         now_utc = datetime.now(timezone.utc)
         now_local = now_utc.astimezone(pytz.timezone("Europe/Brussel"))
