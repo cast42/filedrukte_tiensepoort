@@ -31,9 +31,9 @@ if __name__ == "__main__":
         browser = browser_type.launch(headless=True)
         context = browser.new_context()
         page = context.new_page()
-        page.goto(consent_url)
+        # page.goto(consent_url)
         # page.get_by_role("button", name="Accept all").click()
-
+        page.goto(url)
         for i, el in enumerate(page.get_by_label("Accept all").all()):
             try:
                 el.click()
