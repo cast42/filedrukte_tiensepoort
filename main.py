@@ -28,8 +28,7 @@ if __name__ == "__main__":
     consent_url = f"https://consent.google.com/m?continue={url}"
     with sync_playwright() as p:
         browser_type = p.chromium
-        browser = browser_type.launch()
-        browser = playwright.chromium.launch(headless=True)
+        browser = browser_type.launch(headless=True)
         context = browser.new_context()
         page = context.new_page()
         page.goto(consent_url)
