@@ -42,7 +42,7 @@ if __name__ == "__main__":
         page.wait_for_load_state("networkidle")
 
         now_utc = datetime.now(timezone.utc)
-        now_local = now_utc.astimezone(pytz.timezone("Europe/Brussel"))
+        now_local = now_utc.astimezone(pytz.timezone("Europe/Brussels"))
         timestr = now_local.strftime("%Y%m%d-%H%M%S")
         shot_file = dst / f"rotselaar_{timestr}.png"
         page.screenshot(path=shot_file.as_posix())
