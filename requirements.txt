@@ -1,2 +1,4 @@
 playwright==1.33.0
 pytz
+ipykernel
+opencv-python
