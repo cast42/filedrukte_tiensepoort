@@ -27,7 +27,7 @@ if __name__ == "__main__":
     dst.mkdir(exist_ok=True)
     # url = "https://www.google.com/maps/@50.9503538,4.7123571,734m/data=!5m1!1e1"
     URL_RODENBACHLAAN = (
-        "https://www.google.com/maps/@50.9485719,4.7046956,16.87z/data=!5m1!1e1"
+        "https://www.google.com/maps/@50.9494089,4.7071531,17.48z/data=!5m1!1e1"
     )
     URL_STATIONSTRAAT = (
         "https://www.google.com/maps/@50.9496757,4.7140387,18z/data=!5m1!1e1"
