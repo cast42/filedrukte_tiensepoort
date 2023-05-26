@@ -4,7 +4,6 @@ import logging
 import logging.handlers
 from datetime import datetime, timezone
 
-# import pytz
 from zoneinfo import ZoneInfo
 from pathlib import Path
 from playwright.sync_api import sync_playwright
@@ -28,16 +27,16 @@ if __name__ == "__main__":
     dst.mkdir(exist_ok=True)
     # url = "https://www.google.com/maps/@50.9503538,4.7123571,734m/data=!5m1!1e1"
     URL_RODENBACHLAAN = (
-        "https://www.google.com/maps/@50.9492399,4.7079242,18z/data=!5m1!1e1"
+        "https://www.google.com/maps/@50.9485719,4.7046956,16.87z/data=!5m1!1e1"
     )
     URL_STATIONSTRAAT = (
-        "https://www.google.com/maps/@50.9490978,4.7138349,18z/data=!5m1!1e1"
+        "https://www.google.com/maps/@50.9496757,4.7140387,18z/data=!5m1!1e1"
     )
     URL_TORENSTRAAT = (
-        "https://www.google.com/maps/@50.9509771,4.7137899,18.79z/data=!5m1!1e1"
+        "https://www.google.com/maps/@50.9513387,4.7138704,18z/data=!5m1!1e1"
     )
     URL_PROVINCIEBAAN = (
-        "https://www.google.com/maps/@50.9509773,4.7104413,18.81z/data=!5m1!1e1"
+        "https://www.google.com/maps/@50.9512815,4.7093899,18z/data=!5m1!1e1"
     )
 
     URLS = [URL_RODENBACHLAAN, URL_STATIONSTRAAT, URL_TORENSTRAAT, URL_PROVINCIEBAAN]
