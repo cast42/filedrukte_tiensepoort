@@ -31,7 +31,7 @@ if __name__ == "__main__":
         "https://www.google.com/maps/@50.9492399,4.7079242,18z/data=!5m1!1e1"
     )
     URL_STATIONSTRAAT = (
-        "https://www.google.com/maps/@50.9495439,4.714087,18.79z/data=!5m1!1e1"
+        "https://www.google.com/maps/@50.9490978,4.7138349,18z/data=!5m1!1e1"
     )
     URL_TORENSTRAAT = (
         "https://www.google.com/maps/@50.9509771,4.7137899,18.79z/data=!5m1!1e1"
