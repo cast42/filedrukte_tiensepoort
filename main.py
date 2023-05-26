@@ -58,11 +58,11 @@ if __name__ == "__main__":
         for url, streetname in zip(URLS, STREETNAMES):
             page.goto(url)
             page.wait_for_load_state("networkidle")
-            page.screenshot(path=shot_file.as_posix())
             now_utc = datetime.now(timezone.utc)
             now_local = now_utc.astimezone(ZoneInfo("Europe/Brussels"))
             timestr = now_local.strftime("%Y%m%d-%H%M%S")
             shot_file = dst / f"rotselaar_{streetname}_{timestr}.png"
+            page.screenshot(path=shot_file.as_posix())
             logger.info(f"Took shot {shot_file.as_posix()} on {timestr}.")
         context.close()
         browser.close()
