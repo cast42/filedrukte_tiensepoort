@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+import time
 
 if __name__ == "__main__":
     logger = logging.getLogger(__name__)
@@ -48,20 +49,23 @@ if __name__ == "__main__":
         context = browser.new_context(locale="en-US")
         page = context.new_page()
         page.goto(URLS[0])
-        for i, el in enumerate(page.get_by_label("Accept all").all()):
+        # for i, el in enumerate(page.get_by_label("Accept all").all()):
+        for i, el in enumerate(page.get_by_label("Alles accepteren").all()):
             try:
                 el.click()
             except Exception as e:
                 logging.debug(f"Clicked {i}th element: {str(e)}")
         page.wait_for_load_state("networkidle")
-        for url, streetname in zip(URLS, STREETNAMES):
-            page.goto(url)
-            page.wait_for_load_state("networkidle")
-            now_utc = datetime.now(timezone.utc)
-            now_local = now_utc.astimezone(ZoneInfo("Europe/Brussels"))
-            timestr = now_local.strftime("%Y%m%d-%H%M%S")
-            shot_file = dst / f"rotselaar_{streetname}_{timestr}.png"
-            page.screenshot(path=shot_file.as_posix())
-            logger.info(f"Took shot {shot_file.as_posix()} on {timestr}.")
+        while True:
+            for url, streetname in zip(URLS, STREETNAMES):
+                page.goto(url)
+                page.wait_for_load_state("networkidle")
+                now_utc = datetime.now(timezone.utc)
+                now_local = now_utc.astimezone(ZoneInfo("Europe/Brussels"))
+                timestr = now_local.strftime("%Y%m%d-%H%M%S")
+                shot_file = dst / f"rotselaar_{streetname}_{timestr}.png"
+                page.screenshot(path=shot_file.as_posix())
+                logger.info(f"Took shot {shot_file.as_posix()} on {timestr}.")
+            time.sleep(300)
         context.close()
         browser.close()
