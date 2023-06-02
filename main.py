@@ -44,8 +44,8 @@ if __name__ == "__main__":
 
     with sync_playwright() as p:
         browser_type = p.chromium
-        browser = browser_type.launch(headless=True, locale="en-US")
-        context = browser.new_context()
+        browser = browser_type.launch(headless=True)
+        context = browser.new_context(locale="en-US")
         page = context.new_page()
         page.goto(URLS[0])
         for i, el in enumerate(page.get_by_label("Accept all").all()):
