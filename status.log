@@ -268,3 +268,4 @@
 2023-06-02 14:05:04,620 - __main__ - INFO - Took shot shots/rotselaar_stationstraat_20230602-140504.png on 20230602-140504.
 2023-06-02 14:05:08,017 - __main__ - INFO - Took shot shots/rotselaar_torenstraat_20230602-140507.png on 20230602-140507.
 2023-06-02 14:05:10,878 - __main__ - INFO - Took shot shots/rotselaar_provinciebaan_20230602-140510.png on 20230602-140510.
+2023-06-02 14:24:56,333 - __main__ - DEBUG - Local file /Users/lode/projects/awv/python-github-action-template/shots/rotselaar_torenstraat_20230602-140507.png uploaded successfully to rotselaar_torenstraat_20230602-140507.png blob in dataupload container.

@@ -1,6 +1,7 @@
 """Upload a local file to a blob storage on Azure"""
 
 import logging
+import logging.handlers
 
 # pip install azure-storage-blob azure-identity python-dotenv tenacity
 
@@ -59,6 +60,9 @@ if __name__ == "__main__":
     config = dotenv_values(".env")
 
     try:
-        upload_to_blob_storage("PATH_OF_FILE_TO_UPLOAD", "REMOTE_BLOB_FILE_NAME")
+        upload_to_blob_storage(
+            "/Users/lode/projects/awv/python-github-action-template/shots/rotselaar_torenstraat_20230602-140507.png",
+            "rotselaar_torenstraat_20230602-140507.png",
+        )
     except RetryError:
         logger.error(f"Maximum number of retries reached.")
