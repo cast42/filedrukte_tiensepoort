@@ -168,3 +168,26 @@
 2023-05-26 09:47:06,593 - __main__ - INFO - Took shot shots/rotselaar_stationstraat_20230526-114706.png on 20230526-114706.
 2023-05-26 09:47:10,910 - __main__ - INFO - Took shot shots/rotselaar_torenstraat_20230526-114710.png on 20230526-114710.
 2023-05-26 09:47:14,742 - __main__ - INFO - Took shot shots/rotselaar_provinciebaan_20230526-114714.png on 20230526-114714.
+2023-06-02 10:05:27,580 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:05:32,581 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:05:37,587 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:05:42,593 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:05:47,596 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:06:29,273 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:06:29,274 - __main__ - DEBUG - Local file PATH_OF_FILE_TO_UPLOAD uploaded successfully to REMOTE_BLOB_FILE_NAME blob in GRAB_IT_FROM_AZURE_PORTAL container.
+2023-06-02 10:27:34,920 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:27:39,926 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:27:44,932 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:27:49,938 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:27:54,939 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:30:49,385 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:30:50,388 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:30:51,393 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:30:52,397 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:30:53,403 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:33:20,057 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:33:21,062 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:33:22,069 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:33:23,074 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:33:24,079 - __main__ - ERROR - Error occurred while uploading local file PATH_OF_FILE_TO_UPLOAD: [Errno 2] No such file or directory: 'PATH_OF_FILE_TO_UPLOAD'
+2023-06-02 10:33:24,079 - __main__ - ERROR - Maximum number of retries reached.
