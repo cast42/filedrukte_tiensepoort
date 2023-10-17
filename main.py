@@ -28,13 +28,13 @@ if __name__ == "__main__":
     dst.mkdir(exist_ok=True)
     # url = "https://www.google.com/maps/@50.9503538,4.7123571,734m/data=!5m1!1e1"
     URL_GELDENAAKSEPOORT = (
-        "https://www.google.com/maps/@50.8724828,4.7123349,17.97z/data=!5m1!1e1"
+        "https://www.google.com/maps/@50.8726718,4.7131464,18z/data=!5m1!1e1"
     )
     URL_TIENSEVEST = (
         "https://www.google.com/maps/@50.8747536,4.713817,17.97z/data=!5m1!1e1"
     )
     URL_TIENSESTEENWEG = (
-        "https://www.google.com/maps/@50.8730661,4.7186021,18z/data=!5m1!1e1?e"
+        "https://www.google.com/maps/@50.8733218,4.7172716,18z/data=!5m1!1e1"
     )
     URL_TIENSESTRAAT = (
         "https://www.google.com/maps/@50.8748008,4.7106216,17z/data=!5m1!1e1?entry=ttu"
