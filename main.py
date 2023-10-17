@@ -27,21 +27,21 @@ if __name__ == "__main__":
     dst = Path("./shots")  # Directory to store resulting png images in.
     dst.mkdir(exist_ok=True)
     # url = "https://www.google.com/maps/@50.9503538,4.7123571,734m/data=!5m1!1e1"
-    URL_RODENBACHLAAN = (
-        "https://www.google.com/maps/@50.9494089,4.7071531,17.48z/data=!5m1!1e1"
+    URL_GELDENAAKSEPOORT = (
+        "https://www.google.com/maps/@50.8724828,4.7123349,17.97z/data=!5m1!1e1"
     )
-    URL_STATIONSTRAAT = (
-        "https://www.google.com/maps/@50.9496757,4.7140387,18z/data=!5m1!1e1"
+    URL_TIENSEVEST = (
+        "https://www.google.com/maps/@50.8747536,4.713817,17.97z/data=!5m1!1e1"
     )
-    URL_TORENSTRAAT = (
-        "https://www.google.com/maps/@50.9513387,4.7138704,18z/data=!5m1!1e1"
+    URL_TIENSESTEENWEG = (
+        "https://www.google.com/maps/@50.8730661,4.7186021,18z/data=!5m1!1e1?e"
     )
-    URL_PROVINCIEBAAN = (
-        "https://www.google.com/maps/@50.9512815,4.7093899,18z/data=!5m1!1e1"
+    URL_TIENSESTRAAT = (
+        "https://www.google.com/maps/@50.8748008,4.7106216,17z/data=!5m1!1e1?entry=ttu"
     )
 
-    URLS = [URL_RODENBACHLAAN, URL_STATIONSTRAAT, URL_TORENSTRAAT, URL_PROVINCIEBAAN]
-    STREETNAMES = ["rodenbachlaan", "stationstraat", "torenstraat", "provinciebaan"]
+    URLS = [URL_GELDENAAKSEPOORT, URL_TIENSEVEST, URL_TIENSESTEENWEG, URL_TIENSESTRAAT]
+    STREETNAMES = ["geldenaaksepoort", "tiensevest", "tiensesteenweg", "tiensestraat"]
 
     with sync_playwright() as p:
         browser_type = p.chromium
