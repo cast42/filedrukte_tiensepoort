@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "filedrukte-tiensepoort"
+version = "0.1.0"
+description = "Take screenshot from google maps live trafic layer"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+playwright = "^1.38.0"
+ipykernel = "^6.25.2"
+opencv-python = "^4.8.1.78"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
