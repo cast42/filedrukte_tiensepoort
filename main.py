@@ -9,6 +9,8 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 import time
 
+RUN_LOCAL = False  # Set to True when run locally
+
 if __name__ == "__main__":
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
@@ -56,7 +58,19 @@ if __name__ == "__main__":
             except Exception as e:
                 logging.debug(f"Clicked {i}th element: {str(e)}")
         page.wait_for_load_state("networkidle")
-        while True:
+        if RUN_LOCAL:
+            while True:
+                for url, streetname in zip(URLS, STREETNAMES):
+                    page.goto(url)
+                    page.wait_for_load_state("networkidle")
+                    now_utc = datetime.now(timezone.utc)
+                    now_local = now_utc.astimezone(ZoneInfo("Europe/Brussels"))
+                    timestr = now_local.strftime("%Y%m%d-%H%M%S")
+                    shot_file = dst / f"leuven_{streetname}_{timestr}.png"
+                    page.screenshot(path=shot_file.as_posix())
+                    logger.info(f"Took shot {shot_file.as_posix()} on {timestr}.")
+                time.sleep(300)
+        else:
             for url, streetname in zip(URLS, STREETNAMES):
                 page.goto(url)
                 page.wait_for_load_state("networkidle")
@@ -66,6 +80,5 @@ if __name__ == "__main__":
                 shot_file = dst / f"leuven_{streetname}_{timestr}.png"
                 page.screenshot(path=shot_file.as_posix())
                 logger.info(f"Took shot {shot_file.as_posix()} on {timestr}.")
-            time.sleep(300)
         context.close()
         browser.close()
