@@ -1,6 +1,7 @@
 import cv2
 from pathlib import Path
 import matplotlib.pyplot as plt
+import matplotlib.axes._axes as axes
 from matplotlib.patheffects import Stroke, Normal
 import numpy as np
 import toml
@@ -41,7 +42,7 @@ def argument2path(argument: Union[str, os.PathLike]) -> os.PathLike:
     else:
         raise TypeError("url must be a string or a path object")
     if not argument_path.exists():
-        logger.error(f"Argument {argument_path.as_posix()} does not exists.")
+        # logger.error(f"Argument {argument_path.as_posix()} does not exists.")
         return Path()
     return argument_path
 
@@ -75,7 +76,7 @@ def load_config(tomlfile: Union[str, os.PathLike]) -> dict:
     return config
 
 
-def display_shot(url: Union[str, os.PathLike]):
+def display_shot(url: Union[str, os.PathLike]) -> axes.Axes:
     """
     Display an image from a given URL or file path using Matplotlib.
 
@@ -98,6 +99,41 @@ def display_shot(url: Union[str, os.PathLike]):
     fig, ax = plt.subplots(figsize=(10, 10))
     ax.set_axis_off()
     ax.imshow(im)
+    return ax
+
+
+def show_points_on_screenshot(
+    config: dict,
+    location: str,
+    street: str,
+    url_image: Union[str, os.PathLike],
+    text_offset: int = 6,
+    line_offset: int = 20,
+    ha_offset: str = "center",
+    va_offset: str = "center",
+) -> axes.Axes:
+    # Read in the image on the URL
+    url_image = argument2path(url_image)
+    image_path = argument2path(url_image)
+    im = cv2.cvtColor(cv2.imread(image_path.as_posix()), cv2.COLOR_BGR2RGB)
+    # Plot the point on the screenshot
+    fig, ax = plt.subplots(figsize=(10, 10))
+    ax.spines[:].set_visible(False)
+    ax.yaxis.set_visible(False)
+    ax.xaxis.set_visible(False)
+    ax.imshow(im)
+    for i, p in enumerate(config[location][street]["points"]):
+        x, y = p[0], p[1]
+        x_end, y_end = x - line_offset, y + line_offset
+        ax.plot([x, x_end], [y, y_end], color="k", linewidth=1)
+        ax.annotate(
+            f"{i}",
+            xy=(x_end, y_end),
+            xytext=(x_end - text_offset, y_end + text_offset),
+            fontsize=8,
+            ha=ha_offset,
+            va=va_offset,
+        )
     return ax
 
 
@@ -187,6 +223,13 @@ def get_colors_from_screenshots(
     """
     url_image_dir = argument2path(url_image_dir)
     rows = []
+    color_map = {
+        "[129  31  31]": "darkred",
+        "[242  60  50]": "red",
+        "[255 151  77]": "orange",
+        "[99 214 104]": "green",
+    }
+    # Loop over all screenshots and extract color at the point locations
     for location in config.keys():
         for street in config[location].keys():
             for p in url_image_dir.glob(f"{location}_{street}_*.png"):
@@ -200,19 +243,25 @@ def get_colors_from_screenshots(
                 for point in config[location][street]["points"]:
                     color = screenshot[point[1], point[0]]
                     colors += (color, color[0], color[1], color[2])
+                    color_array_as_string = str(color)
+                    colors += (
+                        color_map.get(color_array_as_string, "grey"),
+                    )  # Grey means no data
                 row = (location, street, p, timestamp) + colors
                 rows.append(row)
+    # Create a dataframe from the list of detected colors
     all_columns = ["location", "street", "path", "timestamp"]
     max_points, max_location, max_street = maximum_measure_points(config)
     for i in range(max_points):
-        all_columns.extend((f"color_{i}", f"p{i}_red", f"p{i}_green", f"p{i}_blue"))
+        all_columns.extend(
+            (
+                f"color_{i}",
+                f"p{i}_red",
+                f"p{i}_green",
+                f"p{i}_blue",
+                f"traffic_color_{i}",
+            )
+        )
     df = pd.DataFrame(rows, columns=all_columns).sort_values(by="timestamp")
-    color_map = {
-        "[129  31  31]": "darkred",
-        "[242  60  50]": "red",
-        "[255 151  77]": "orange",
-        "[99 214 104]": "green",
-    }
-    for i in range(max_points):
-        df[f"traffic_color_{i}"] = df[f"color_{i}"].astype(str).map(color_map)
-    return df.sort_values(by="timestamp")
+
+    return df
