@@ -107,6 +107,7 @@ def show_points_on_screenshot(
     location: str,
     street: str,
     url_image: Union[str, os.PathLike],
+    direction: str = "to",
     text_offset: int = 6,
     line_offset: int = 20,
     ha_offset: str = "center",
@@ -122,7 +123,7 @@ def show_points_on_screenshot(
     ax.yaxis.set_visible(False)
     ax.xaxis.set_visible(False)
     ax.imshow(im)
-    for i, p in enumerate(config[location][street]["points"]):
+    for i, p in enumerate(config[location][street][f"points_{direction}"]):
         x, y = p[0], p[1]
         x_end, y_end = x - line_offset, y + line_offset
         ax.plot([x, x_end], [y, y_end], color="k", linewidth=1)
@@ -137,7 +138,7 @@ def show_points_on_screenshot(
     return ax
 
 
-def maximum_measure_points(config: dict) -> Tuple[int, str, str]:
+def maximum_measure_points(config: dict) -> Tuple[int, str, str, str]:
     """
     Find the location and street with the maximum number of measurement points in the given configuration.
 
@@ -145,7 +146,7 @@ def maximum_measure_points(config: dict) -> Tuple[int, str, str]:
         config (Dict[str, Dict[str, dict]]): A dictionary containing configuration information with nested structure.
 
     Returns:
-        Tuple[int, str, str]: A tuple containing the maximum number of points, the location with the maximum points,
+        Tuple[int, str, str, str]: A tuple containing the maximum number of points, the location with the maximum points,
                              and the street with the maximum points.
 
     Example:
@@ -176,20 +177,28 @@ def maximum_measure_points(config: dict) -> Tuple[int, str, str]:
     max_points = 0
     max_location = ""
     max_street = ""
+    max_direction = ""
     for location in config.keys():
         for street in config[location].keys():
-            if not "points" in config[location][street]:
-                continue
-            number_of_points = len(config[location][street]["points"])
-            if number_of_points > max_points:
-                max_points = number_of_points
-                max_location = location
-                max_street = street
-    return max_points, max_location, max_street
+            for points in config[location][street].keys():
+                if "points_from" in config[location][street]:
+                    points = "points_from"
+                elif "points_to" in config[location][street]:
+                    points = "points_to"
+                else:
+                    continue
+
+                number_of_points = len(config[location][street][points])
+                if number_of_points > max_points:
+                    max_points = number_of_points
+                    max_location = location
+                    max_street = street
+                    max_direction = points[6:]
+    return max_points, max_location, max_street, max_direction
 
 
 def get_colors_from_screenshots(
-    config: dict, url_image_dir: Union[str, os.PathLike]
+    config: dict, url_image_dir: Union[str, os.PathLike], direction: str = "to"
 ) -> pd.DataFrame:
     """
     Extract color information from screenshots based on the provided configuration.
@@ -197,6 +206,7 @@ def get_colors_from_screenshots(
     Args:
         config (dict): Configuration dictionary containing information about locations, streets, and points.
         url_image_dir (Union[str, os.PathLike]): Path to the directory containing screenshot images.
+        direction (str): Must be "to" or "from". Indicated the direction of the traffic relative to the crossing.
 
     Returns:
         pd.DataFrame: DataFrame containing extracted color data with columns including location, street, path,
@@ -222,6 +232,7 @@ def get_colors_from_screenshots(
         and returns the data in a DataFrame for further analysis and visualization.
     """
     url_image_dir = argument2path(url_image_dir)
+    assert direction in ["to", "from"], "Argument {direction=}. Must be 'to' or 'from'"
     rows = []
     color_map = {
         "[129  31  31]": "darkred",
@@ -238,9 +249,9 @@ def get_colors_from_screenshots(
                 )
                 screenshot = cv2.cvtColor(cv2.imread(p.as_posix()), cv2.COLOR_BGR2RGB)
                 colors = ()
-                if not "points" in config[location][street]:
+                if not f"points_{direction}" in config[location][street]:
                     continue
-                for point in config[location][street]["points"]:
+                for point in config[location][street][f"points_{direction}"]:
                     color = screenshot[point[1], point[0]]
                     colors += (color, color[0], color[1], color[2])
                     color_array_as_string = str(color)
@@ -251,7 +262,7 @@ def get_colors_from_screenshots(
                 rows.append(row)
     # Create a dataframe from the list of detected colors
     all_columns = ["location", "street", "path", "timestamp"]
-    max_points, max_location, max_street = maximum_measure_points(config)
+    max_points, _, _, _ = maximum_measure_points(config)
     for i in range(max_points):
         all_columns.extend(
             (
