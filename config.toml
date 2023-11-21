@@ -1,5 +1,6 @@
-[leuven.geldenaaksepoort]
+[leuven.geldenaaksevest]
 url = "https://www.google.com/maps/@50.8726718,4.7131464,18z/data=!5m1!1e1"
+points_to = [ [ 887, 78,], [ 855, 136,], [ 804, 211,], [ 770, 255,], [ 732, 304,], [ 724, 315,], [ 704, 341,], [ 659, 400,], [ 628, 440,], [ 610, 463,], [ 597, 480,], [ 574, 510,], [ 555, 535,], [ 524, 575,], [ 440, 685,], [ 418, 712,],]
 
 [leuven.tiensevest]
 url = "https://www.google.com/maps/@50.8747536,4.713817,17.97z/data=!5m1!1e1"
