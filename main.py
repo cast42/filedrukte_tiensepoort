@@ -8,8 +8,13 @@ from zoneinfo import ZoneInfo
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 import time
+from traffic_analysis import (
+    load_config,
+)
 
 RUN_LOCAL = False  # Set to True when run locally
+CONFIG_FILE = "config.toml"
+assert Path(CONFIG_FILE).exists()
 
 if __name__ == "__main__":
     logger = logging.getLogger(__name__)
@@ -26,31 +31,26 @@ if __name__ == "__main__":
     logger_file_handler.setFormatter(formatter)
     logger.addHandler(logger_file_handler)
 
+    config = load_config(CONFIG_FILE)
+
     dst = Path("./shots")  # Directory to store resulting png images in.
     dst.mkdir(exist_ok=True)
-    # url = "https://www.google.com/maps/@50.9503538,4.7123571,734m/data=!5m1!1e1"
-    URL_GELDENAAKSEPOORT = (
-        "https://www.google.com/maps/@50.8726718,4.7131464,18z/data=!5m1!1e1"
-    )
-    URL_TIENSEVEST = (
-        "https://www.google.com/maps/@50.8747536,4.713817,17.97z/data=!5m1!1e1"
-    )
-    URL_TIENSESTEENWEG = (
-        "https://www.google.com/maps/@50.8733218,4.7172716,18z/data=!5m1!1e1"
-    )
-    URL_TIENSESTRAAT = (
-        "https://www.google.com/maps/@50.8748008,4.7106216,17z/data=!5m1!1e1?entry=ttu"
-    )
 
-    URLS = [URL_GELDENAAKSEPOORT, URL_TIENSEVEST, URL_TIENSESTEENWEG, URL_TIENSESTRAAT]
-    STREETNAMES = ["geldenaaksepoort", "tiensevest", "tiensesteenweg", "tiensestraat"]
+    urls = []
+    for location_i in config.keys():
+        for street_i in config[location_i].keys():
+            urls.append(config[location_i][street_i]["url"])
+    streetnames = []
+    for location_i in config.keys():
+        for street_i in config[location_i].keys():
+            streetnames.append(street_i)
 
     with sync_playwright() as p:
         browser_type = p.chromium
         browser = browser_type.launch(headless=True)
         context = browser.new_context(locale="en-US")
         page = context.new_page()
-        page.goto(URLS[0])
+        page.goto(urls[0])
         # for i, el in enumerate(page.get_by_label("Accept all").all()):
         for i, el in enumerate(page.get_by_label("Alles accepteren").all()):
             try:
@@ -60,7 +60,7 @@ if __name__ == "__main__":
         page.wait_for_load_state("networkidle")
         if RUN_LOCAL:
             while True:
-                for url, streetname in zip(URLS, STREETNAMES):
+                for url, streetname in zip(urls, streetnames):
                     page.goto(url)
                     page.wait_for_load_state("networkidle")
                     now_utc = datetime.now(timezone.utc)
@@ -71,7 +71,7 @@ if __name__ == "__main__":
                     logger.info(f"Took shot {shot_file.as_posix()} on {timestr}.")
                 time.sleep(300)
         else:
-            for url, streetname in zip(URLS, STREETNAMES):
+            for url, streetname in zip(urls, streetnames):
                 page.goto(url)
                 page.wait_for_load_state("networkidle")
                 now_utc = datetime.now(timezone.utc)
