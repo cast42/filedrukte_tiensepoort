@@ -108,7 +108,7 @@ def show_points_on_screenshot(
     location: str,
     street: str,
     url_image: Union[str, os.PathLike],
-    direction: str = "to",
+    points_list_name: str,
     x_text_offset: int = 6,
     y_text_offset: int = 6,
     x_line_offset: int = 20,
@@ -126,7 +126,7 @@ def show_points_on_screenshot(
     ax.yaxis.set_visible(False)
     ax.xaxis.set_visible(False)
     ax.imshow(im)
-    for i, p in enumerate(config[location][street][f"points_{direction}"]):
+    for i, p in enumerate(config[location][street][points_list_name]):
         x, y = p[0], p[1]
         x_end, y_end = x - x_line_offset, y + y_line_offset
         ax.plot([x, x_end], [y, y_end], color="k", linewidth=1)
@@ -190,8 +190,8 @@ def maximum_measure_points(config: dict) -> Tuple[int, str, str, str]:
                     max_points = number_of_points
                     max_location = location
                     max_street = street
-                    max_direction = points[7:]
-    return max_points, max_location, max_street, max_direction
+                    max_list_name = points
+    return max_points, max_location, max_street, max_list_name
 
 
 def get_colors_from_screenshots(
@@ -199,7 +199,7 @@ def get_colors_from_screenshots(
     url_image_dir: Union[str, os.PathLike],
     location: str,
     street: str,
-    direction: str = "to",
+    points_list_name: str,
 ) -> pd.DataFrame:
     """
     Extract color information from screenshots based on the provided configuration.
@@ -207,7 +207,7 @@ def get_colors_from_screenshots(
     Args:
         config (dict): Configuration dictionary containing information about locations, streets, and points.
         url_image_dir (Union[str, os.PathLike]): Path to the directory containing screenshot images.
-        direction (str): Must be "to" or "from". Indicated the direction of the traffic relative to the crossing.
+        points_list_name (str): Name of the list of points to be sampled.
 
     Returns:
         pd.DataFrame: DataFrame containing extracted color data with columns including location, street, path,
@@ -226,7 +226,7 @@ def get_colors_from_screenshots(
         ...     }
         ... }
         >>> url_image_dir = '/path/to/screenshots'
-        >>> result_df = get_colors_from_screenshots(config, url_image_dir, direction)
+        >>> result_df = get_colors_from_screenshots(config, url_image_dir, points_list_name)
 
     Note:
         This function processes screenshots of traffic data based on the provided configuration.
@@ -234,7 +234,6 @@ def get_colors_from_screenshots(
         and returns the data in a DataFrame for further analysis and visualization.
     """
     url_image_dir = argument2path(url_image_dir)
-    assert direction in ["to", "from"], "Argument {direction=}. Must be 'to' or 'from'"
     rows = []
     number_of_points, _, _, _ = maximum_measure_points(config)
     color_map = {
@@ -244,30 +243,22 @@ def get_colors_from_screenshots(
         "[99 214 104]": "green",
     }
     # Loop over all screenshots and extract color at the point locations
-    for i_location in config.keys():
-        for i_street in config[location].keys():
-            if not f"points_{direction}" in config[i_location][i_street]:
-                continue
-            for p in url_image_dir.glob(f"{i_location}_{i_street}_*.png"):
-                timestamp = datetime.strptime(
-                    p.stem, f"{i_location}_{i_street}_%Y%m%d-%H%M%S"
-                )
-                screenshot = cv2.cvtColor(cv2.imread(p.as_posix()), cv2.COLOR_BGR2RGB)
-                colors = ()
-                for idx, point in enumerate(
-                    config[i_location][i_street][f"points_{direction}"]
-                ):
-                    color = screenshot[point[1], point[0]]
-                    colors += (color, color[0], color[1], color[2])
-                    color_array_as_string = str(color)
-                    colors += (
-                        color_map.get(color_array_as_string, "grey"),
-                    )  # Grey means no data
-                # Fill the rest of the columns with grey color
-                for _ in range(idx + 1, number_of_points):
-                    colors += ([128, 128, 128], 128, 128, 128, "grey")
-                row = (i_location, i_street, p, timestamp) + colors
-                rows.append(row)
+    for p in url_image_dir.glob(f"{location}_{street}_*.png"):
+        timestamp = datetime.strptime(p.stem, f"{location}_{street}_%Y%m%d-%H%M%S")
+        screenshot = cv2.cvtColor(cv2.imread(p.as_posix()), cv2.COLOR_BGR2RGB)
+        colors = ()
+        for idx, point in enumerate(config[location][street][points_list_name]):
+            color = screenshot[point[1], point[0]]
+            colors += (color, color[0], color[1], color[2])
+            color_array_as_string = str(color)
+            colors += (
+                color_map.get(color_array_as_string, "grey"),
+            )  # Grey means no data
+        # Fill the rest of the columns with grey color
+        for _ in range(idx + 1, number_of_points):
+            colors += ([128, 128, 128], 128, 128, 128, "grey")
+        row = (location, street, p, timestamp) + colors
+        rows.append(row)
 
     # Create a dataframe from the list of detected colors
     all_columns = ["location", "street", "path", "timestamp"]

@@ -5,24 +5,23 @@ import numpy as np
 import pprint
 import toml
 import argparse
+import sys
 
 parser = argparse.ArgumentParser()
 parser.add_argument("image_path_str", type=str, help="URL of image to be processed")
-# Add the '-direction' flag
-# The choices parameter restricts the argument to the provided choices ('to', 'from').
+# Add the '-point_list_name' flag
 # The default parameter sets the default value if the flag is not specified.
 parser.add_argument(
-    "-direction",
+    "-point_list_name",
     type=str,
-    choices=["to", "from"],
-    default="to",
-    help="Direction of processing ('to' or 'from')",
+    default="points_to",
+    help="Name of the list with measure points",
 )
 
 args = parser.parse_args()
 
 local_file_path = args.image_path_str
-direction = args.direction
+point_list_name = args.point_list_name
 
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -40,7 +39,7 @@ img = cv2.imread(image_path.as_posix(), cv2.IMREAD_UNCHANGED)
 
 location, street, time = image_path.stem.split("_")
 
-print(f"{location=}, {street=}, {direction=}")
+print(f"{location=}, {street=}, {point_list_name=}")
 
 
 # Step 3: Create a mouse callback function
@@ -86,11 +85,22 @@ while True:
     if cv2.waitKey(0) & 0xFF == ord("q"):
         break
 
-print(f"points {direction}= ", end="")
+print(f"points {point_list_name}= ", end="")
 pp.pprint(points)
 
+if point_list_name in config[location][street].keys():
+    prompt = "Array with name {point_list_name} already exists. Overwrite [y/n]?"
+    while True:
+        user_input = input(prompt).lower()
+        if user_input in ["y", "yes"]:
+            break
+        elif user_input in ["n", "no"]:
+            sys.exit()
+        else:
+            print("Please enter 'y' or 'n'.")
 
-config[location][street][f"points_{direction}"] = points
+
+config[location][street][point_list_name] = points
 
 with open("config.toml", "w") as f:
     # Write the dictionary to the file as TOML
