@@ -126,7 +126,7 @@ def show_points_on_screenshot(
     ax.yaxis.set_visible(False)
     ax.xaxis.set_visible(False)
     ax.imshow(im)
-    for i, p in enumerate(config[location][street][points_list_name]):
+    for i, p in enumerate(config[location][street]["points"][points_list_name]):
         x, y = p[0], p[1]
         x_end, y_end = x - x_line_offset, y + y_line_offset
         ax.plot([x, x_end], [y, y_end], color="k", linewidth=1)
@@ -156,16 +156,19 @@ def maximum_measure_points(config: dict) -> Tuple[int, str, str, str]:
         >>> config = {
         ...     'Location1': {
         ...         'StreetA': {
-        ...             'points_to': [(1, 2), (3, 4)],
-        ...             'points_from': [(1, 2), (3, 4)]
+        ...             'points': {'to': [(1, 2), (3, 4)],
+        ...                         'from': [(1, 2), (3, 4)]
+        ...              }
         ...         },
         ...         'StreetB': {
-        ...             'points_to': [(5, 6), (7, 8), (9, 10)]
+                        'points': {
+        ...                 'to': [(5, 6), (7, 8), (9, 10)]
+                         }
         ...         }
         ...     },
         ...     'Location2': {
         ...         'StreetC': {
-        ...             'points_to': [(11, 12)]
+        ...             'points': {'to': [(11, 12)]}
         ...         }
         ...     }
         ... }
@@ -184,8 +187,8 @@ def maximum_measure_points(config: dict) -> Tuple[int, str, str, str]:
     max_direction = ""
     for location in config.keys():
         for street in config[location].keys():
-            for points in config[location][street].keys():
-                number_of_points = len(config[location][street][points])
+            for points in config[location][street]["points"].keys():
+                number_of_points = len(config[location][street]["points"][points])
                 if number_of_points > max_points:
                     max_points = number_of_points
                     max_location = location
@@ -217,11 +220,19 @@ def get_colors_from_screenshots(
         >>> config = {
         ...     'Location1': {
         ...         'StreetA': {
-        ...             'points_to': [(100, 200), (150, 250)]
+        ...             'points': {'to': [(1, 2), (3, 4)],
+        ...                         'from': [(1, 2), (3, 4)]
+        ...              }
         ...         },
         ...         'StreetB': {
-        ...             'points_from': [(50, 75)]
-        ...             'points_to': [(100, 200), (150, 250)]
+        ...             'points': {
+        ...                 'to': [(5, 6), (7, 8), (9, 10)]
+        ...              }
+        ...         }
+        ...     },
+        ...     'Location2': {
+        ...         'StreetC': {
+        ...             'points': {'to': [(11, 12)]}
         ...         }
         ...     }
         ... }
@@ -247,7 +258,9 @@ def get_colors_from_screenshots(
         timestamp = datetime.strptime(p.stem, f"{location}_{street}_%Y%m%d-%H%M%S")
         screenshot = cv2.cvtColor(cv2.imread(p.as_posix()), cv2.COLOR_BGR2RGB)
         colors = ()
-        for idx, point in enumerate(config[location][street][points_list_name]):
+        for idx, point in enumerate(
+            config[location][street]["points"][points_list_name]
+        ):
             color = screenshot[point[1], point[0]]
             colors += (color, color[0], color[1], color[2])
             color_array_as_string = str(color)
