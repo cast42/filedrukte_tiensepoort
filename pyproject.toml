@@ -13,6 +13,9 @@ opencv-python = "^4.8.1.78"
 matplotlib = "^3.8.1"
 toml = "^0.10.2"
 pandas = "^2.1.2"
+azure-functions = "^1.17.0"
+azure-identity = "^1.15.0"
+azure-storage-blob = "^12.19.0"
 
 
 [build-system]
