@@ -8,9 +8,10 @@ import toml
 from datetime import datetime
 import pandas as pd
 import re
-from typing import Union, Tuple
+from typing import Union, Tuple, Dict, List
 import os
 from pprint import pprint
+import math
 
 
 def argument2path(argument: Union[str, os.PathLike]) -> os.PathLike:
@@ -264,12 +265,10 @@ def get_colors_from_screenshots(
             color = screenshot[point[1], point[0]]
             colors += (color, color[0], color[1], color[2])
             color_array_as_string = str(color)
-            colors += (
-                color_map.get(color_array_as_string, "grey"),
-            )  # Grey means no data
+            colors += (color_array_as_string,)
         # Fill the rest of the columns with grey color
         for _ in range(idx + 1, number_of_points):
-            colors += ([128, 128, 128], 128, 128, 128, "grey")
+            colors += ([128, 128, 128], 128, 128, 128, "[128 128 128]")
         row = (location, street, p, timestamp) + colors
         rows.append(row)
 
@@ -290,3 +289,130 @@ def get_colors_from_screenshots(
     df = pd.DataFrame(rows, columns=all_columns).sort_values(by="timestamp")
 
     return df
+
+
+def rgb_to_xyz(r, g, b):
+    # Convert RGB to [0, 1] range
+    r, g, b = r / 255.0, g / 255.0, b / 255.0
+
+    # Assuming sRGB
+    r = ((r + 0.055) / 1.055) ** 2.4 if r > 0.04045 else r / 12.92
+    g = ((g + 0.055) / 1.055) ** 2.4 if g > 0.04045 else g / 12.92
+    b = ((b + 0.055) / 1.055) ** 2.4 if b > 0.04045 else b / 12.92
+
+    # Convert to XYZ
+    x = r * 0.4124 + g * 0.3576 + b * 0.1805
+    y = r * 0.2126 + g * 0.7152 + b * 0.0722
+    z = r * 0.0193 + g * 0.1192 + b * 0.9505
+
+    return x, y, z
+
+
+def xyz_to_lab(x, y, z):
+    # Observer=2°, Illuminant=D65
+    x = x / 95.047
+    y = y / 100.000
+    z = z / 108.883
+
+    x = x ** (1 / 3) if x > 0.008856 else (7.787 * x) + (16 / 116)
+    y = y ** (1 / 3) if y > 0.008856 else (7.787 * y) + (16 / 116)
+    z = z ** (1 / 3) if z > 0.008856 else (7.787 * z) + (16 / 116)
+
+    l = (116 * y) - 16
+    a = 500 * (x - y)
+    b = 200 * (y - z)
+
+    return l, a, b
+
+
+def rgb_to_lab(r, g, b):
+    x, y, z = rgb_to_xyz(r, g, b)
+    return xyz_to_lab(x, y, z)
+
+
+def euclidean_distance(
+    color1: Tuple[float, float, float], color2: Tuple[float, float, float]
+) -> float:
+    # Function to calculate Euclidean distance between two vectors
+    return math.sqrt(sum((c1 - c2) ** 2 for c1, c2 in zip(color1, color2)))
+
+
+def map_color(
+    color: str, cielab_target_colors: Dict[str, Tuple[float, float, float]]
+) -> Tuple[str, float]:
+    """
+    Maps an RGB color to the closest color in CIELAB space from a given set of target colors.
+
+    Args:
+    color (str): The RGB color to be mapped, in the format 'rgb(r, g, b)'.
+    cielab_target_colors (dict): A dictionary where keys are color names and values are colors in CIELAB space.
+
+    Returns:
+    Tuple[str, float]: The name of the closest color from the target set and the Euclidean distance to it in CIELAB space.
+    """
+    # Extract RGB values from the input string
+    numbers = re.findall(r"\d+", color)
+    assert (
+        len(numbers) == 3
+    ), f"Input {color} string has {len(numbers)} numbers: {numbers=}. Expected 3"
+
+    # Convert string numbers to integers
+    r, g, b = [int(num) for num in numbers]
+
+    # Convert RGB to CIELAB
+    cielab_color = rgb_to_lab(r, g, b)
+
+    # Find the closest color
+    closest_color = min(
+        cielab_target_colors,
+        key=lambda named_color: euclidean_distance(
+            cielab_color, cielab_target_colors[named_color]
+        ),
+    )
+
+    # Calculate the Euclidean distance to the closest color
+    cielab_euclid_distance = euclidean_distance(
+        cielab_color, cielab_target_colors[closest_color]
+    )
+
+    return closest_color, cielab_euclid_distance
+
+
+def map_colors(unique_colors: List[str]) -> Dict[str, str]:
+    """
+    Maps each color in a list of unique RGB color strings to the closest color from a predefined set of target colors.
+
+    The mapping is done based on the CIELAB color space. The function converts the target colors and the input colors to CIELAB space and then finds the closest target color for each input color.
+
+    Args:
+        unique_colors (List[str]): A list of color strings in the RGB format in string format.
+        Each string must contain 3 integer numbers.
+
+    Returns:
+        Dict[str, str]: A dictionary mapping each color in `unique_colors` to the name of the closest color from the predefined set.
+
+    Note:
+        The function assumes the input RGB colors are in string format and need to be parsed.
+        The target colors are predefined within the function in RGB.
+    """
+    # Predefined target colors in RGB
+    target_colors = {
+        "darkred": (139, 0, 0),
+        "red": (255, 0, 0),
+        "orange": (255, 165, 0),
+        "green": (2, 128, 8),
+        "grey": (128, 128, 128),
+    }
+
+    # Convert target colors to CIELAB
+    cielab_target_colors = {
+        color_name: rgb_to_lab(*rgb_values)
+        for color_name, rgb_values in target_colors.items()
+    }
+
+    # Map each unique color to the closest target color
+    mapped_colors = {
+        color: map_color(color, cielab_target_colors)[0] for color in unique_colors
+    }
+
+    return mapped_colors
